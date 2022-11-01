@@ -1,6 +1,9 @@
 package com.example.rsocket.service;
 
+import com.example.rsocket.Wrapper;
 import com.example.rsocket.dto.MovieScene;
+import com.example.rsocket.repo.MovieDataBaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,20 +11,23 @@ import java.util.List;
 @Service
 public class MovieService {
 
-    private final List<MovieScene> scenes =  List.of(
-            new MovieScene(1, "Scene 1"),
-            new MovieScene(2, "Scene 2"),
-            new MovieScene(3, "Scene 3"),
-            new MovieScene(4, "Scene 4"),
-            new MovieScene(5, "Scene 5")
-    );
+    MovieDataBaseService movieDataBaseService;
+    Wrapper wrapper;
+    @Autowired
+    public MovieService(MovieDataBaseService movieDataBaseService, Wrapper wrapper){
+        this.movieDataBaseService = movieDataBaseService;
+        this.wrapper = wrapper;
+    }
+    private final List<MovieScene> scenes(){
+      return wrapper.wrapDataFromTables(movieDataBaseService.findAll());
+    }
 
     public List<MovieScene> getScenes(){
-        return this.scenes;
+        return scenes();
     }
 
     public MovieScene getScene(int index){
-        return this.scenes.get(index);
+        return scenes().get(index);
     }
 
 }
